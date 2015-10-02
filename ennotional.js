@@ -2,7 +2,13 @@ var SadBot = require('./sadBot'), config = require('./node_modules/twit/config1'
 
 var en = new SadBot(config);
 
-en.findFriends({q: "depression", result_type:"recent"}, en.readFeed);
+en.findFriends(, en.readFeed);
+
+en.findTheSad = function(callback){
+	en.findFriends({q: "depression", result_type:"recent"},function(callback){
+		en.readFeed(_,_,)
+	})
+}
 
 
 function handleError(err) {

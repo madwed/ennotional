@@ -35,19 +35,23 @@ FeelBot.prototype.findFriends = function(params,callback){
 
 FeelBot.prototype.readFeed = function(err,self,user_ids,callback){
 	if (err){return callback(err);}
+	var usersFeelings = {};
 	user_ids.forEach(function(user){
 		self.twit.get('statuses/user_timeline'
-				, {user_id: user, count: 40, trim_user: true, exclude_replies: true, include_rts: false}
-				, function(err,userTweets){
-					if(err){return callback(err);}
-					var tweetTexts = [];
-					userTweets.forEach(function(tweetObj){
-						tweetTexts.push(tweetObj.text)
-					});
-					return self.checkDepression(null,tweetTexts);
+		, {user_id: user, count: 40, trim_user: true, exclude_replies: true, include_rts: false}
+		, function(err,userTweets){
+			if(err){
+				console.log(err);
+			}else{
+				var tweetTexts = [];
+				userTweets.forEach(function(tweetObj){
+					tweetTexts.push(tweetObj.text)
+				});
+				usersFeelings[user] = tweetTexts;
+			}
 		});
 	});
-	
+	return callback(null,userFeelings);
 }
 
 FeelBot.prototype.follow = function(user_id,callback){
@@ -55,7 +59,7 @@ FeelBot.prototype.follow = function(user_id,callback){
 }
 
 FeelBot.prototype.checkDepression = function(err,tweetTexts){
+	if (err){return callback(err)}
 	var tweets = tweetTexts.slice();
-	tweets = tweets.join(' ').toUpperCase().replace(/[^\w\s]/g,'').replace(/HTTP\w+/g,'').replace(/\s{2,}/g," ");//.split(' ');
-	console.log(tweets);
+	tweets = tweets.join(' ').toUpperCase().replace(/[^\w\s]/g,'').replace(/HTTP\w+/g,'').replace(/\s{2,}/g," ");
 }
